@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Para Julia ❤️</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    text-align:center;
+    color:#333;
+
+    background:linear-gradient(
+        135deg,
+        #ffffff,
+        #fff8fb,
+        #fff0f5,
+        #ffe4ec,
+        #ffd6e7,
+        #ffe4ec,
+        #fff0f5,
+        #ffffff
+    );
+
+    background-size:600% 600%;
+    animation:fondo 20s ease infinite;
+}
+
+@keyframes fondo{
+    0%{
+        background-position:0% 50%;
+    }
+    50%{
+        background-position:100% 50%;
+    }
+    100%{
+        background-position:0% 50%;
+    }
+}
+
+.hero{
+    background:rgba(255,255,255,0.92);
+    padding:50px 20px;
+    border-bottom:2px solid #ffe4ec;
+
+    animation:aparecer 1.5s ease;
+}
+
+.hero h1{
+    font-size:48px;
+    margin:0;
+    color:#ff69b4;
+
+    text-shadow:
+        0 0 5px #ffc0d9,
+        0 0 15px #ffc0d9,
+        0 0 25px #ffd4e5;
+}
+
+.hero p{
+    font-size:18px;
+    margin-top:10px;
+    color:#333;
+}
+
+.card{
+    background:white;
+    margin:25px;
+    padding:25px;
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.1);
+
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+}
+
+@keyframes aparecer{
+
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+#juego{
+    width:100%;
+    height:220px;
+
+    background:#ffe4ec;
+
+    border-radius:20px;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+#corazon{
+    position:absolute;
+
+    left:45%;
+    top:40%;
+
+    background:none;
+    border:none;
+
+    font-size:40px;
+
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.flotante{
+    position:fixed;
+
+    bottom:-50px;
+
+    pointer-events:none;
+
+    color:#ff69b4;
+
+    animation:subir linear infinite;
+
+    z-index:-1;
+}
+
+@keyframes subir{
+
+    from{
+        transform:translateY(0);
+        opacity:1;
+    }
+
+    to{
+        transform:translateY(-120vh);
+        opacity:0;
+    }
+
+}
+
+#premio{
+
+    display:none;
+
+    position:fixed;
+    inset:0;
+
+    z-index:999;
+
+    background:linear-gradient(
+        135deg,
+        #ff69b4,
+        #ff85c1,
+        #ff9dcd
+    );
+
+    color:white;
+
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+
+    text-align:center;
+
+    padding:30px;
+}
+
+#premio h1{
+    font-size:60px;
+    margin:0;
+}
+
+#premio p{
+    font-size:24px;
+    margin-top:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+    <h1>Para Julia ❤️</h1>
+    <p>De Arturo con mucho amor</p>
+</div>
+
+<div class="card">
+
+<h2>Una carta para ti ❤️</h2>
+<p>Te amo con todo mi corazon.
+<br>Cuando te conoci se que todo era incierto, inestable.
+<br>Pero mientras mas estabamos juntos y mas tiempo pasabamos, me empezaste a gustar cada dia mas.
+<br>Se que cometi errores y hemos tenido problemas, pero estamos juntos y bien que es lo que importa, pero quiero pasar todos mis dias contigo, porque eres todo lo que quiero y a quien mas amo en la vida.
+</div>
+
+<div class="card">
+
+    <h2>10 razones por las cuales te amo</h2>
+
+    <p style="line-height:1.8;">
+
+        1. Tu sonrisa.<br>
+        2. Tu pelo.<br>
+        3. Tu forma de ser.<br>
+        4. Tu cuerpo.<br>
+        5. Nuestros momentos juntos.<br>
+        6. Tus manos.<br>
+        7. Tus detalles.<br>
+        8. Tu olor. (déjame en paz)<br>
+        9. Como me quieres.<br>
+        10. Que te preocupes por mí. (como yo de ti)<br><br>
+
+        <strong>TODO de ti.</strong>
+
+    </p>
+
+</div>
+
+<div class="card">
+
+    <h2>Un jueguito para ti ❤️</h2>
+
+    <p>Atrapa 10 corazones antes de que se acabe el tiempo.</p>
+
+    <div id="juego">
+        <button id="corazon">❤️</button>
+    </div>
+
+    <p>
+        Tiempo:
+        <span id="tiempo">240</span>s
+    </p>
+
+    <p>
+        Puntos:
+        <span id="puntos">0</span>/10
+    </p>
+
+</div>
+
+<div id="premio">
+
+    <h1>❤️ TE AMO JULIA ❤️</h1>
+
+    <p>
+        Gracias por estar conmigo.<br><br>
+        Eres mi lugar favorito.<br>
+        Te elegiría una y mil veces más. ❤️
+    </p>
+
+</div>
+
+<script>
+
+let puntos = 0;
+let tiempo = 240;
+let timer;
+
+const corazon = document.getElementById("corazon");
+const puntosSpan = document.getElementById("puntos");
+const tiempoSpan = document.getElementById("tiempo");
+
+function iniciarJuego(){
+
+    puntos = 0;
+    tiempo = 240;
+
+    puntosSpan.innerText = puntos;
+    tiempoSpan.innerText = tiempo;
+
+    corazon.style.display = "block";
+    corazon.style.left = "45%";
+    corazon.style.top = "40%";
+
+    clearInterval(timer);
+
+    timer = setInterval(() => {
+
+        tiempo--;
+
+        tiempoSpan.innerText = tiempo;
+
+        if(tiempo <= 0){
+
+            clearInterval(timer);
+
+            corazon.style.display = "none";
+
+            alert(
+                "❤️ Se acabó el tiempo.\n\nConseguiste "
+                + puntos +
+                " puntos."
+            );
+
+            iniciarJuego();
+        }
+
+    },1000);
+}
+
+corazon.onclick = function(){
+
+    if(tiempo <= 0) return;
+
+    puntos++;
+
+    puntosSpan.innerText = puntos;
+
+    corazon.style.left =
+        Math.random()*85 + "%";
+
+    corazon.style.top =
+        Math.random()*75 + "%";
+
+    corazon.style.transform =
+        "scale(1.5) rotate(" +
+        Math.random()*360 +
+        "deg)";
+
+    setTimeout(() => {
+
+        corazon.style.transform =
+        "scale(1)";
+
+    },150);
+
+    if(puntos === 10){
+
+        clearInterval(timer);
+
+        corazon.style.display = "none";
+
+        document.getElementById("premio")
+        .style.display = "flex";
+
+        setTimeout(() => {
+
+            document.getElementById("premio")
+            .style.display = "none";
+
+            iniciarJuego();
+
+        },5000);
+    }
+};
+
+for(let i=0;i<60;i++){
+
+    const c = document.createElement("div");
+
+    c.className = "flotante";
+
+    c.innerHTML = "❤️";
+
+    c.style.left =
+        Math.random()*100 + "vw";
+
+    c.style.fontSize =
+        (20 + Math.random()*25) + "px";
+
+    c.style.animationDuration =
+        (6 + Math.random()*8) + "s";
+
+    c.style.animationDelay =
+        Math.random()*10 + "s";
+
+    document.body.appendChild(c);
+}
+
+iniciarJuego();
+
+</script>
+
+</body>
+</html>
