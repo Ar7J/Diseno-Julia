@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Julia ❤️ — De Arturo</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Playfair Display (elegante para títulos) y Plus Jakarta Sans (moderna para lectura) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons para detalles minimalistas -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        roseSoft: {
+                            50: '#fff5f8',
+                            100: '#ffe4ec',
+                            200: '#ffc6d9',
+                            300: '#ff9bbd',
+                            400: '#ff69b4',
+                            500: '#f43f8e',
+                            600: '#e11d74',
+                        }
+                    },
+                    animation: {
+                        'gradient-slow': 'gradientBG 18s ease infinite',
+                        'float-slow': 'floatGentle 6s ease-in-out infinite',
+                        'pulse-soft': 'pulseSoft 2.5s infinite',
+                    },
+                    keyframes: {
+                        gradientBG: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                        },
+                        floatGentle: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.08)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Fondo animado sutil que conserva tu paleta original */
+        body {
+            background: linear-gradient(
+                135deg,
+                #ffffff 0%,
+                #fff8fb 20%,
+                #fff0f5 40%,
+                #ffe4ec 60%,
+                #ffd6e7 80%,
+                #fff5f8 100%
+            );
+            background-size: 400% 400%;
+            animation: gradientBG 18s ease infinite;
+            overflow-x: hidden;
+        }
+
+        /* Efecto cristal moderno (Glassmorphism) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 228, 236, 0.9);
+            box-shadow: 0 20px 40px -15px rgba(255, 105, 180, 0.14);
+        }
+
+        /* Corazones flotantes de fondo */
+        .floating-heart {
+            position: fixed;
+            bottom: -60px;
+            pointer-events: none;
+            z-index: 0;
+            user-select: none;
+            animation: riseUp linear infinite;
+            filter: drop-shadow(0 2px 6px rgba(255, 105, 180, 0.25));
+        }
+
+        @keyframes riseUp {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.8);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.7;
+            }
+            85% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-115vh) rotate(25deg) scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        /* Animación de entrada al hacer scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: all 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Brillo de texto en título principal */
+        .pink-glow {
+            text-shadow: 0 4px 24px rgba(255, 105, 180, 0.35);
+        }
+
+        /* Arena del juego con patrón de puntos sutil */
+        .game-arena {
+            background-color: #fff0f5;
+            background-image: radial-gradient(#ffc6d9 1.5px, transparent 1.5px);
+            background-size: 22px 22px;
+        }
+    </style>
+</head>
+<body class="font-sans text-slate-700 antialiased selection:bg-roseSoft-200 selection:text-roseSoft-600">
+
+    <!-- Contenedor para corazones flotantes generados por JS -->
+    <div id="hearts-container" aria-hidden="true"></div>
+
+    <!-- Barra de navegación flotante minimalista -->
+    <nav class="sticky top-4 z-40 mx-auto max-w-2xl px-4">
+        <div class="glass-card rounded-full px-5 py-2.5 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-600 shadow-sm">
+            <a href="#inicio" class="font-serif font-bold text-roseSoft-500 text-base flex items-center gap-1.5">
+                <span>Para Julia</span> <span class="text-sm">❤️</span>
+            </a>
+            <div class="flex items-center gap-4 sm:gap-6">
+                <a href="#carta" class="hover:text-roseSoft-500 transition-colors">Mi Carta</a>
+                <a href="#razones" class="hover:text-roseSoft-500 transition-colors">10 Razones</a>
+                <a href="#promesas" class="hover:text-roseSoft-500 transition-colors hidden sm:inline">Nosotros</a>
+                <a href="#juego-seccion" class="bg-roseSoft-400 hover:bg-roseSoft-500 text-white px-3.5 py-1.5 rounded-full transition-all shadow-sm">
+                    Jugar
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header id="inicio" class="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-14 sm:pt-24 sm:pb-20 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 border border-roseSoft-200 text-roseSoft-500 text-xs sm:text-sm font-semibold tracking-wide uppercase mb-6 shadow-sm animate-float-slow">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Un rincón hecho solo para ti</span>
+        </div>
+
+        <h1 class="font-serif text-5xl sm:text-7xl font-bold text-roseSoft-400 pink-glow tracking-tight leading-tight">
+            Para Julia ❤️
+        </h1>
+
+        <p class="mt-4 text-lg sm:text-xl text-slate-600 font-light max-w-xl mx-auto">
+            De <span class="font-semibold text-roseSoft-500">Arturo</span>, con todo el amor del mundo y cada pedacito de mi corazón.
+        </p>
+
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+            <a href="#carta" class="px-6 py-3 rounded-full bg-gradient-to-r from-roseSoft-400 to-roseSoft-500 text-white font-medium shadow-lg shadow-roseSoft-300/40 hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                <span>Leer mi carta</span>
+                <i data-lucide="heart" class="w-4 h-4 fill-current"></i>
+            </a>
+            <a href="#razones" class="px-6 py-3 rounded-full bg-white/90 hover:bg-white text-roseSoft-500 border border-roseSoft-200 font-medium shadow-sm hover:-translate-y-0.5 transition-all">
+                Ver por qué te amo
+            </a>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 space-y-12 pb-24">
+
+        <!-- SECCIÓN 1: CARTA EXTENDIDA Y DETALLADA -->
+        <section id="carta" class="reveal glass-card rounded-3xl p-7 sm:p-12 relative overflow-hidden">
+            <!-- Decoración sutil en esquina -->
+            <div class="absolute -top-10 -right-10 w-36 h-36 bg-roseSoft-100 rounded-full opacity-60 blur-2xl pointer-events-none"></div>
+            
+            <div class="flex items-center justify-between border-b border-roseSoft-100 pb-5 mb-7">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-roseSoft-400">Palabras sinceras</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-800 mt-1">Una carta para ti ❤️</h2>
+                </div>
+                <div class="w-12 h-12 rounded-2xl bg-roseSoft-50 border border-roseSoft-200 flex items-center justify-center text-roseSoft-400">
+                    <i data-lucide="mail-open" class="w-6 h-6"></i>
+                </div>
+            </div>
+
+            <div class="space-y-5 text-base sm:text-lg leading-relaxed text-slate-600 text-left font-normal">
+                <p class="font-serif italic text-xl text-roseSoft-500">
+                    "Te amo con todo mi corazón..."
+                </p>
+
+                <p>
+                    Cuando te conocí, sé que todo era incierto e inestable. Ninguno de los dos sabía exactamente hacia dónde iba todo esto, y tal vez al principio todo parecía un poco confuso. Pero mientras más estábamos juntos, mientras más platicábamos y más tiempo pasábamos compartiendo nuestras vidas, me empezaste a gustar cada día más, de una manera que ni yo mismo me esperaba.
+                </p>
+
+                <p>
+                    Poco a poco te fuiste convirtiendo en mi pensamiento favorito del día, en la persona a la que siempre quiero contarle cómo me fue, y en esa calma que necesito cuando el mundo afuera va demasiado rápido.
+                </p>
+
+                <p>
+                    Sé perfectamente que cometí errores y que hemos tenido nuestros problemas y momentos difíciles en el camino. No somos perfectos, pero lo que realmente importa es que seguimos aquí, juntos y bien, aprendiendo el uno del otro y eligiendo quedarnos en lugar de rendirnos.
+                </p>
+
+                <p class="bg-roseSoft-50/80 border-l-4 border-roseSoft-400 p-4 rounded-r-2xl text-slate-700 font-medium">
+                    Quiero pasar todos mis días contigo, construir miles de recuerdos nuevos a tu lado y cuidarte siempre, porque eres todo lo que quiero y a quien más amo en esta vida.
+                </p>
+
+                <div class="pt-4 flex items-center justify-between text-sm text-slate-500">
+                    <span>Siempre tuyo,</span>
+                    <span class="font-serif italic text-xl font-bold text-roseSoft-500">— Arturo ❤️</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: LAS 10 RAZONES EXPANDIDAS -->
+        <section id="razones" class="reveal glass-card rounded-3xl p-7 sm:p-12">
+            <div class="text-center max-w-xl mx-auto mb-10">
+                <span class="text-xs font-bold uppercase tracking-widest text-roseSoft-400">Lista infinita</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-800 mt-1">10 razones por las cuales te amo</h2>
+                <p class="text-slate-500 text-sm sm:text-base mt-2">
+                    Aunque me faltarían páginas enteras para escribirlas todas, aquí están diez cosas de ti que me vuelven loco:
+                </p>
+            </div>
+
+            <!-- Cuadrícula moderna de tarjetas -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">1</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tu sonrisa</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Porque tiene el poder de arreglarme cualquier mal día en cuestión de segundos y hacer que todo valga la pena.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">2</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tu pelo</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Me encanta cómo se ve, cómo se mueve y lo bonito que te queda sin importar cómo lo lleves puesto.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">3</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tu forma de ser</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Tan auténtica, única y especial; esa esencia tuya que hace imposible no enamorarse más cada vez que hablamos.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">4</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tu cuerpo</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Me fascinas de pies a cabeza; cada parte de ti me encanta y me atrae muchísimo.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">5</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Nuestros momentos juntos</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Desde las pláticas más profundas hasta las risas más tontas; contigo cualquier lugar se vuelve mi favorito.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">6</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tus manos</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Me encanta tomarlas, sentirlas junto a las mías y saber que estamos caminando juntos.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">7</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tus detalles</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Esas pequeñas cosas que haces o dices sin darte cuenta y que demuestran lo mucho que te importo.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">8</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tu olor <span class="text-xs font-normal text-roseSoft-400 italic">(déjame en paz)</span></h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Aunque me digas cosas, sabes perfectamente que tu aroma es de mis cosas favoritas en el mundo y se me queda grabado.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">9</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Cómo me quieres</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">La forma tan bonita, sincera y especial en la que me haces sentir amado todos los días.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">10</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Que te preocupes por mí <span class="text-xs font-normal text-roseSoft-400 italic">(como yo de ti)</span></h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Saber que estás al pendiente de mí, así como yo siempre voy a estar cuidándote y pendiente de ti.</p>
+                </div>
+
+            </div>
+
+            <!-- Cierre destacado de las 10 razones -->
+            <div class="mt-8 p-6 rounded-2xl bg-gradient-to-r from-roseSoft-100/80 via-roseSoft-50 to-roseSoft-100/80 border border-roseSoft-200 text-center">
+                <p class="font-serif text-2xl sm:text-3xl font-bold text-roseSoft-500">
+                    En resumen: amo TODO de ti. ❤️
+                </p>
+                <p class="text-sm text-slate-600 mt-1">Con tus virtudes, tus locuras y cada pequeño detalle que te hace ser tú.</p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: DETALLES EXTRA / LO QUE SIGNIFICAS PARA MÍ -->
+        <section id="promesas" class="reveal glass-card rounded-3xl p-7 sm:p-12">
+            <div class="text-center max-w-xl mx-auto mb-8">
+                <span class="text-xs font-bold uppercase tracking-widest text-roseSoft-400">Para recordarte siempre</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-800 mt-1">Lo que eres para mí</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="p-6 rounded-2xl bg-white/80 border border-roseSoft-100 text-center">
+                    <div class="w-12 h-12 mx-auto rounded-2xl bg-roseSoft-100 text-roseSoft-500 flex items-center justify-center mb-4">
+                        <i data-lucide="sun" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-serif font-bold text-lg text-slate-800 mb-2">Mi Paz</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Eres ese lugar seguro al que siempre quiero volver después de cualquier día pesado.
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-white/80 border border-roseSoft-100 text-center">
+                    <div class="w-12 h-12 mx-auto rounded-2xl bg-roseSoft-100 text-roseSoft-500 flex items-center justify-center mb-4">
+                        <i data-lucide="infinity" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-serif font-bold text-lg text-slate-800 mb-2">Mi Elección</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        En los días buenos y en los difíciles, te elegiría a ti una y mil veces sin dudarlo.
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-white/80 border border-roseSoft-100 text-center">
+                    <div class="w-12 h-12 mx-auto rounded-2xl bg-roseSoft-100 text-roseSoft-500 flex items-center justify-center mb-4">
+                        <i data-lucide="stars" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-serif font-bold text-lg text-slate-800 mb-2">Mi Futuro</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Todos mis planes tienen más sentido desde que estás tú formando parte de ellos.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Botón interactivo para mensajes sorpresa -->
+            <div class="mt-8 text-center">
+                <button id="btn-nota-rapida" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-roseSoft-50 hover:bg-roseSoft-100 text-roseSoft-600 border border-roseSoft-200 text-sm font-semibold transition-all active:scale-95">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>Toca para leer un recordatorio más</span>
+                </button>
+                <p id="texto-nota-rapida" class="mt-3 font-serif italic text-lg text-roseSoft-500 min-h-[28px] transition-opacity duration-300">
+                    "Eres lo más bonito que me ha pasado."
+                </p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: EL MINIJUEGO MEJORADO -->
+        <section id="juego-seccion" class="reveal glass-card rounded-3xl p-7 sm:p-12 text-center">
+            <span class="text-xs font-bold uppercase tracking-widest text-roseSoft-400">Sorpresa interactiva</span>
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-800 mt-1">Un jueguito para ti ❤️</h2>
+            <p class="text-slate-600 mt-2 text-sm sm:text-base max-w-md mx-auto">
+                Atrapa <strong>10 corazones</strong> antes de que se acabe el tiempo para desbloquear tu mensaje especial.
+            </p>
+
+            <!-- Barra de estado del juego -->
+            <div class="mt-6 max-w-md mx-auto">
+                <div class="flex items-center justify-between text-sm font-semibold mb-2 px-1">
+                    <span class="flex items-center gap-1.5 text-slate-600 bg-white px-3 py-1 rounded-full border border-roseSoft-100 shadow-xs">
+                        <i data-lucide="clock" class="w-4 h-4 text-roseSoft-400"></i>
+                        Tiempo: <span id="tiempo" class="text-roseSoft-500 font-bold">240</span>s
+                    </span>
+                    <span class="flex items-center gap-1.5 text-slate-600 bg-white px-3 py-1 rounded-full border border-roseSoft-100 shadow-xs">
+                        <i data-lucide="heart" class="w-4 h-4 text-roseSoft-400 fill-current"></i>
+                        Puntos: <span id="puntos" class="text-roseSoft-500 font-bold">0</span>/10
+                    </span>
+                </div>
+
+                <!-- Barra de progreso visual -->
+                <div class="w-full h-3 bg-roseSoft-100 rounded-full overflow-hidden p-0.5 border border-roseSoft-200">
+                    <div id="barra-progreso" class="h-full bg-gradient-to-r from-roseSoft-400 to-roseSoft-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Arena de juego -->
+            <div id="juego" class="game-arena mt-6 w-full h-64 sm:h-72 rounded-3xl border-2 border-roseSoft-200 relative overflow-hidden shadow-inner select-none">
+                
+                <!-- Mensaje dinámico dentro de la arena (ej. si se acaba el tiempo, sin usar alert) -->
+                <div id="mensaje-juego" class="hidden absolute inset-0 bg-white/90 backdrop-blur-xs z-20 flex-col items-center justify-center p-6 text-center">
+                    <p id="mensaje-juego-titulo" class="font-serif text-2xl font-bold text-roseSoft-500"></p>
+                    <p id="mensaje-juego-desc" class="text-slate-600 text-sm mt-2"></p>
+                    <button onclick="iniciarJuego()" class="mt-4 px-5 py-2 rounded-full bg-roseSoft-400 hover:bg-roseSoft-500 text-white text-sm font-semibold shadow-md transition-all">
+                        Volver a intentar ❤️
+                    </button>
+                </div>
+
+                <!-- Botón del corazón atrapable -->
+                <button id="corazon" aria-label="Atrapar corazón" class="absolute left-[45%] top-[40%] text-4xl sm:text-5xl cursor-pointer transition-all duration-200 hover:scale-110 active:scale-90 focus:outline-none p-2">
+                    ❤️
+                </button>
+            </div>
+
+            <div class="mt-4">
+                <button onclick="iniciarJuego()" class="text-xs text-slate-400 hover:text-roseSoft-500 underline transition-colors">
+                    Reiniciar juego
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="relative z-10 text-center pb-10 px-4 text-xs sm:text-sm text-slate-500">
+        <p>Hecho con todo el cariño del mundo por <strong class="text-roseSoft-500">Arturo</strong> para <strong class="text-roseSoft-500">Julia</strong> ❤️</p>
+    </footer>
+
+    <!-- PANTALLA DE PREMIO AL GANAR EL JUEGO -->
+    <div id="premio" class="hidden fixed inset-0 z-50 bg-gradient-to-br from-roseSoft-400 via-roseSoft-500 to-pink-500 text-white flex-col items-center justify-center text-center p-6 backdrop-blur-md transition-opacity duration-500">
+        <div class="max-w-lg mx-auto bg-white/15 backdrop-blur-lg border border-white/30 rounded-3xl p-8 sm:p-12 shadow-2xl animate-pulse-soft">
+            <div class="text-5xl sm:text-6xl mb-4">💖✨💖</div>
+            <h1 class="font-serif text-4xl sm:text-6xl font-bold tracking-tight drop-shadow-md">
+                TE AMO JULIA
+            </h1>
+            <p class="mt-6 text-lg sm:text-2xl font-light leading-relaxed text-white/95">
+                Gracias por estar conmigo.<br><br>
+                <span class="font-semibold">Eres mi lugar favorito.</span><br>
+                Te elegiría una y mil veces más. ❤️
+            </p>
+            <button id="cerrar-premio" class="mt-8 px-7 py-3 rounded-full bg-white text-roseSoft-500 font-bold text-sm sm:text-base shadow-lg hover:bg-roseSoft-50 transition-all cursor-pointer">
+                Seguir leyendo tu página ❤️
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Inicializar iconos de Lucide
+        lucide.createIcons();
+
+        // 1. GENERADOR DE CORAZONES FLOTANTES DE FONDO
+        const heartsContainer = document.getElementById("hearts-container");
+        const heartSymbols = ["❤️", "💖", "💕", "🌸", "💗"];
+        
+        for (let i = 0; i < 40; i++) {
+            const heart = document.createElement("div");
+            heart.className = "floating-heart";
+            heart.innerText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+            
+            heart.style.left = (Math.random() * 98) + "vw";
+            heart.style.fontSize = (16 + Math.random() * 20) + "px";
+            heart.style.animationDuration = (9 + Math.random() * 11) + "s";
+            heart.style.animationDelay = (Math.random() * 10) + "s";
+            
+            heartsContainer.appendChild(heart);
+        }
+
+        // 2. ANIMACIÓN SUAVE AL HACER SCROLL (Intersection Observer)
+        const revealElements = document.querySelectorAll(".reveal");
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("active");
+                }
+            });
+        }, { threshold: 0.12 });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // 3. RECORDATORIOS ROMÁNTICOS INTERACTIVOS
+        const notasRomanticas = [
+            "Eres lo más bonito que me ha pasado.",
+            "Contigo hasta los días normales se sienten especiales.",
+            "No importa qué pase, siempre voy a estar para ti.",
+            "Me encanta absolutamente todo de ti, Julia.",
+            "Eres mi persona favorita en todo el mundo.",
+            "Gracias por hacerme tan feliz cada día."
+        ];
+        let indiceNota = 0;
+        const btnNota = document.getElementById("btn-nota-rapida");
+        const textoNota = document.getElementById("texto-nota-rapida");
+
+        btnNota.addEventListener("click", () => {
+            textoNota.style.opacity = "0";
+            setTimeout(() => {
+                indiceNota = (indiceNota + 1) % notasRomanticas.length;
+                textoNota.innerText = `"${notasRomanticas[indiceNota]}"`;
+                textoNota.style.opacity = "1";
+            }, 200);
+        });
+
+        // 4. LÓGICA DEL JUEGO DE ATRAPAR CORAZONES
+        let puntos = 0;
+        let tiempo = 240;
+        let timer = null;
+
+        const corazon = document.getElementById("corazon");
+        const puntosSpan = document.getElementById("puntos");
+        const tiempoSpan = document.getElementById("tiempo");
+        const barraProgreso = document.getElementById("barra-progreso");
+        const premioModal = document.getElementById("premio");
+        const cerrarPremioBtn = document.getElementById("cerrar-premio");
+        const mensajeJuego = document.getElementById("mensaje-juego");
+        const mensajeJuegoTitulo = document.getElementById("mensaje-juego-titulo");
+        const mensajeJuegoDesc = document.getElementById("mensaje-juego-desc");
+
+        function iniciarJuego() {
+            puntos = 0;
+            tiempo = 240;
+
+            puntosSpan.innerText = puntos;
+            tiempoSpan.innerText = tiempo;
+            barraProgreso.style.width = "0%";
+
+            mensajeJuego.classList.add("hidden");
+            mensajeJuego.classList.remove("flex");
+
+            corazon.style.display = "block";
+            corazon.style.left = "45%";
+            corazon.style.top = "40%";
+            corazon.style.transform = "scale(1) rotate(0deg)";
+
+            clearInterval(timer);
+
+            timer = setInterval(() => {
+                tiempo--;
+                tiempoSpan.innerText = tiempo;
+
+                if (tiempo <= 0) {
+                    clearInterval(timer);
+                    corazon.style.display = "none";
+
+                    // Mostrar mensaje elegante dentro de la arena en lugar de alert()
+                    mensajeJuegoTitulo.innerText = "❤️ ¡Se acabó el tiempo!";
+                    mensajeJuegoDesc.innerText = `Conseguiste ${puntos} de 10 corazones. ¡Inténtalo de nuevo!`;
+                    mensajeJuego.classList.remove("hidden");
+                    mensajeJuego.classList.add("flex");
+                }
+            }, 1000);
+        }
+
+        function moverYContarCorazon(e) {
+            if (e) e.preventDefault();
+            if (tiempo <= 0 || puntos >= 10) return;
+
+            puntos++;
+            puntosSpan.innerText = puntos;
+            barraProgreso.style.width = `${(puntos / 10) * 100}%`;
+
+            // Posición aleatoria dentro de límites seguros para que no se corte
+            const nuevaX = 8 + Math.random() * 76;
+            const nuevaY = 10 + Math.random() * 68;
+            const rotacion = (Math.random() * 60) - 30;
+
+            corazon.style.left = nuevaX + "%";
+            corazon.style.top = nuevaY + "%";
+            corazon.style.transform = `scale(1.35) rotate(${rotacion}deg)`;
+
+            setTimeout(() => {
+                corazon.style.transform = "scale(1) rotate(0deg)";
+            }, 160);
+
+            if (puntos === 10) {
+                clearInterval(timer);
+                corazon.style.display = "none";
+
+                premioModal.classList.remove("hidden");
+                premioModal.classList.add("flex");
+            }
+        }
+
+        // Soporte tanto para clic de ratón como para toque rápido en celular
+        corazon.addEventListener("click", moverYContarCorazon);
+
+        cerrarPremioBtn.addEventListener("click", () => {
+            premioModal.classList.add("hidden");
+            premioModal.classList.remove("flex");
+            iniciarJuego();
+        });
+
+        // Iniciar juego al cargar
+        window.addEventListener("load", iniciarJuego);
+    </script>
+</body>
+</html>
