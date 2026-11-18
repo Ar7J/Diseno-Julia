@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Julia ❤️ — De Arturo</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Playfair Display (elegante para títulos) y Plus Jakarta Sans (moderna para lectura) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons para detalles minimalistas -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Tone.js para melodía ambiental suave generada por código -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        roseSoft: {
+                            50: '#fff5f8',
+                            100: '#ffe4ec',
+                            200: '#ffc6d9',
+                            300: '#ff9bbd',
+                            400: '#ff69b4',
+                            500: '#e84393',
+                            600: '#c2185b',
+                        }
+                    },
+                    animation: {
+                        'float-slow': 'floatSlow 6s ease-in-out infinite',
+                        'pulse-soft': 'pulseSoft 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        floatSlow: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' },
+                        },
+                        pulseSoft: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.03)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Fondo degradado animado suave y romántico */
+        body {
+            background: linear-gradient(
+                135deg,
+                #ffffff 0%,
+                #fff8fb 20%,
+                #fff0f5 40%,
+                #ffe4ec 60%,
+                #ffd6e7 80%,
+                #fff0f5 100%
+            );
+            background-size: 400% 400%;
+            animation: fondoAnimado 18s ease infinite;
+            overflow-x: hidden;
+        }
+
+        @keyframes fondoAnimado {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Efecto Glassmorphism (cristal translúcido moderno) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 198, 217, 0.6);
+            box-shadow: 0 20px 40px -15px rgba(255, 105, 180, 0.14);
+        }
+
+        /* Brillo neón rosa suave para el título */
+        .pink-glow {
+            text-shadow: 0 2px 15px rgba(255, 105, 180, 0.35);
+        }
+
+        /* Corazones flotantes del fondo */
+        .floating-heart {
+            position: fixed;
+            bottom: -50px;
+            pointer-events: none;
+            z-index: 0;
+            animation: subirCorazon linear infinite;
+            opacity: 0.75;
+        }
+
+        @keyframes subirCorazon {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.9);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.8;
+            }
+            85% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-115vh) rotate(25deg) scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        /* Animación de entrada al hacer scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Patrón sutil para la arena del minijuego */
+        .game-arena {
+            background-color: #fff0f5;
+            background-image: radial-gradient(#ffc6d9 1.5px, transparent 1.5px);
+            background-size: 22px 22px;
+        }
+
+        /* Efecto de brillo al pasar el cursor sobre tarjetas */
+        .coupon-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,240,245,0.95) 100%);
+            border: 2px dashed #ff9bbd;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .coupon-card.redeemed {
+            background: linear-gradient(135deg, #ffe4ec 0%, #ffc6d9 100%);
+            border-style: solid;
+            border-color: #ff69b4;
+            transform: scale(0.98);
+        }
+
+        /* Animación 3D del sobre interactivo */
+        .envelope-wrapper {
+            perspective: 1000px;
+        }
+        .envelope-flap {
+            transform-origin: top;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            clip-path: polygon(0 0, 50% 60%, 100% 0);
+        }
+        .envelope-wrapper.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+
+        /* Canvas de Love Dash */
+        #dashCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 1.5rem;
+        }
+    </style>
+</head>
+<body class="font-sans text-slate-700 antialiased selection:bg-roseSoft-200 selection:text-roseSoft-600">
+
+    <!-- Contenedor para corazones flotantes generados por JS -->
+    <div id="hearts-container" aria-hidden="true"></div>
+
+    <!-- Barra de navegación flotante minimalista con botón de música -->
+    <nav class="sticky top-4 z-40 mx-auto max-w-2xl px-4">
+        <div class="glass-card rounded-full px-4 sm:px-5 py-2.5 flex items-center justify-between text-xs sm:text-sm font-medium text-slate-600 shadow-sm">
+            <a href="#inicio" class="font-serif font-bold text-roseSoft-500 text-base flex items-center gap-1.5">
+                <span>Para Julia</span> <span class="text-sm">❤️</span>
+            </a>
+            <div class="flex items-center gap-3 sm:gap-5">
+                <a href="#carta" class="hover:text-roseSoft-500 transition-colors">Carta</a>
+                <a href="#razones" class="hover:text-roseSoft-500 transition-colors">10 Razones</a>
+                <a href="#planes" class="hover:text-roseSoft-500 transition-colors hidden sm:inline">Planes</a>
+                <button id="btn-musica" title="Música ambiental" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-roseSoft-50 hover:bg-roseSoft-100 text-roseSoft-500 border border-roseSoft-200 transition-all cursor-pointer">
+                    <i id="icono-musica" data-lucide="volume-x" class="w-4 h-4"></i>
+                    <span class="hidden md:inline text-xs font-semibold">Melodía</span>
+                </button>
+                <a href="#juego-seccion" class="bg-roseSoft-400 hover:bg-roseSoft-500 text-white px-3.5 py-1.5 rounded-full transition-all shadow-sm">
+                    Jugar
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header id="inicio" class="relative z-10 max-w-4xl mx-auto px-6 pt-16 pb-14 sm:pt-24 sm:pb-20 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/90 border border-roseSoft-200 text-roseSoft-500 text-xs sm:text-sm font-semibold tracking-wide uppercase mb-6 shadow-sm animate-float-slow">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            <span>Un rincón hecho solo para ti</span>
+        </div>
+
+        <h1 class="font-serif text-5xl sm:text-7xl font-bold text-roseSoft-400 pink-glow tracking-tight leading-tight">
+            Para Julia ❤️
+        </h1>
+
+        <p class="mt-4 text-lg sm:text-xl text-slate-600 font-light max-w-xl mx-auto">
+            De <span class="font-semibold text-roseSoft-500">Arturo</span>, con todo el amor del mundo y cada pedacito de mi corazón.
+        </p>
+
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+            <a href="#carta" class="px-6 py-3 rounded-full bg-gradient-to-r from-roseSoft-400 to-roseSoft-500 text-white font-medium shadow-lg shadow-roseSoft-300/40 hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center gap-2">
+                <span>Leer mi carta</span>
+                <i data-lucide="heart" class="w-4 h-4 fill-current"></i>
+            </a>
+            <a href="#razones" class="px-6 py-3 rounded-full bg-white/90 hover:bg-white text-roseSoft-500 border border-roseSoft-200 font-medium shadow-sm hover:-translate-y-0.5 transition-all">
+                Ver por qué te amo
+            </a>
+        </div>
+
+        <!-- CONTADOR EN VIVO DESDE EL 1 DE OCTUBRE DE 2024 -->
+        <div class="mt-12 max-w-xl mx-auto glass-card rounded-3xl p-5 sm:p-6">
+            <p class="text-xs font-bold uppercase tracking-widest text-roseSoft-400 mb-3">
+                Tiempo desde que nos conocimos (1 de Oct, 2024) ✨
+            </p>
+            <div class="grid grid-cols-4 gap-2 sm:gap-4 text-center">
+                <div class="bg-white/90 rounded-2xl p-2.5 sm:p-3 border border-roseSoft-100 shadow-xs">
+                    <span id="cnt-dias" class="block font-serif text-2xl sm:text-3xl font-bold text-roseSoft-500">0</span>
+                    <span class="text-[11px] sm:text-xs text-slate-500 font-medium">Días</span>
+                </div>
+                <div class="bg-white/90 rounded-2xl p-2.5 sm:p-3 border border-roseSoft-100 shadow-xs">
+                    <span id="cnt-horas" class="block font-serif text-2xl sm:text-3xl font-bold text-roseSoft-500">0</span>
+                    <span class="text-[11px] sm:text-xs text-slate-500 font-medium">Horas</span>
+                </div>
+                <div class="bg-white/90 rounded-2xl p-2.5 sm:p-3 border border-roseSoft-100 shadow-xs">
+                    <span id="cnt-minutos" class="block font-serif text-2xl sm:text-3xl font-bold text-roseSoft-500">0</span>
+                    <span class="text-[11px] sm:text-xs text-slate-500 font-medium">Minutos</span>
+                </div>
+                <div class="bg-white/90 rounded-2xl p-2.5 sm:p-3 border border-roseSoft-100 shadow-xs">
+                    <span id="cnt-segundos" class="block font-serif text-2xl sm:text-3xl font-bold text-roseSoft-500">0</span>
+                    <span class="text-[11px] sm:text-xs text-slate-500 font-medium">Segundos</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 space-y-12 pb-24">
+
+        <!-- SECCIÓN 1: SOBRE INTERACTIVO + CARTA EXTENDIDA -->
+        <section id="carta" class="reveal glass-card rounded-3xl p-7 sm:p-12 relative overflow-hidden">
+            <!-- Decoración sutil en esquina -->
+            <div class="absolute -top-10 -right-10 w-36 h-36 bg-roseSoft-100 rounded-full opacity-60 blur-2xl pointer-events-none"></div>
+            
+            <!-- Vista previa del sobre cerrado -->
+            <div id="sobre-cerrado" class="envelope-wrapper max-w-md mx-auto my-4 cursor-pointer group" onclick="abrirSobre()">
+                <div class="relative bg-gradient-to-br from-roseSoft-100 to-roseSoft-200 rounded-2xl h-56 shadow-lg border border-roseSoft-300 flex flex-col items-center justify-center p-6 overflow-hidden transition-transform duration-300 group-hover:scale-[1.02]">
+                    <!-- Solapa triangular superior -->
+                    <div class="envelope-flap absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-roseSoft-300 to-roseSoft-200 z-10 shadow-sm"></div>
+                    
+                    <!-- Sello de corazón en el centro -->
+                    <div class="relative z-20 w-16 h-16 rounded-full bg-white shadow-md flex items-center justify-center text-3xl border-2 border-roseSoft-300 animate-pulse-soft">
+                        💌
+                    </div>
+                    <p class="relative z-20 mt-4 font-serif font-bold text-lg text-roseSoft-600">Tienes una carta de Arturo</p>
+                    <span class="relative z-20 mt-1 text-xs font-semibold uppercase tracking-wider text-roseSoft-500 bg-white/80 px-3 py-1 rounded-full">
+                        Toca el sobre para abrirlo
+                    </span>
+                </div>
+            </div>
+
+            <!-- Contenido real de la carta (se despliega al tocar el sobre) -->
+            <div id="contenido-carta" class="hidden transition-all duration-700 opacity-0 translate-y-4">
+                <div class="flex items-center justify-between border-b border-roseSoft-100 pb-5 mb-7">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-roseSoft-400">Palabras sinceras</span>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-800 mt-1">Una carta para ti ❤️</h2>
+                    </div>
+                    <div class="w-12 h-12 rounded-2xl bg-roseSoft-50 border border-roseSoft-200 flex items-center justify-center text-roseSoft-400">
+                        <i data-lucide="mail-open" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div class="space-y-5 text-base sm:text-lg leading-relaxed text-slate-600 text-left font-normal">
+                    <p class="font-serif italic text-xl text-roseSoft-500">
+                        "Te amo con todo mi corazón..."
+                    </p>
+
+                    <p>
+                        Cuando te conocí, sé que todo era incierto e inestable. Ninguno de los dos sabía exactamente hacia dónde iba todo esto, y tal vez al principio todo parecía un poco confuso. Pero mientras más estábamos juntos, mientras más platicábamos y más tiempo pasábamos compartiendo nuestras vidas, me empezaste a gustar cada día más, de una manera que ni yo mismo me esperaba.
+                    </p>
+
+                    <p>
+                        Poco a poco te fuiste convirtiendo en mi pensamiento favorito del día, en la persona a la que siempre quiero contarle cómo me fue, y en esa calma que necesito cuando el mundo afuera va demasiado rápido.
+                    </p>
+
+                    <p>
+                        Sé perfectamente que cometí errores y que hemos tenido nuestros problemas y momentos difíciles en el camino. No somos perfectos, pero lo que realmente importa es que seguimos aquí, juntos y bien, aprendiendo el uno del otro y eligiendo quedarnos en lugar de rendirnos.
+                    </p>
+
+                    <p class="bg-roseSoft-50/80 border-l-4 border-roseSoft-400 p-4 rounded-r-2xl text-slate-700 font-medium">
+                        Quiero pasar todos mis días contigo, construir miles de recuerdos nuevos a tu lado y cuidarte siempre, porque eres todo lo que quiero y a quien más amo en esta vida.
+                    </p>
+
+                    <div class="pt-4 flex items-center justify-between text-sm text-slate-500">
+                        <span>Siempre tuyo,</span>
+                        <span class="font-serif italic text-xl font-bold text-roseSoft-500">— Arturo ❤️</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: LAS 10 RAZONES EXPANDIDAS -->
+        <section id="razones" class="reveal glass-card rounded-3xl p-7 sm:p-12">
+            <div class="text-center max-w-xl mx-auto mb-10">
+                <span class="text-xs font-bold uppercase tracking-widest text-roseSoft-400">Lista infinita</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-800 mt-1">10 razones por las cuales te amo</h2>
+                <p class="text-slate-500 text-sm sm:text-base mt-2">
+                    Aunque me faltarían páginas enteras para escribirlas todas, aquí están diez cosas de ti que me vuelven loco:
+                </p>
+            </div>
+
+            <!-- Cuadrícula moderna de tarjetas -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+                
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">1</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tu sonrisa</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Porque tiene el poder de arreglarme cualquier mal día en cuestión de segundos y hacer que todo valga la pena.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">2</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tu pelo</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Me encanta cómo se ve, cómo se mueve y lo bonito que te queda sin importar cómo lo lleves puesto.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">3</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tu forma de ser</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Tan auténtica, única y especial; esa esencia tuya que hace imposible no enamorarse más cada vez que hablamos.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">4</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tu cuerpo</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Me fascinas de pies a cabeza; cada parte de ti me encanta y me atrae muchísimo.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">5</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Nuestros momentos juntos</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Desde las pláticas más profundas hasta las risas más tontas; contigo cualquier lugar se vuelve mi favorito.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">6</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tus manos</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Me encanta tomarlas, sentirlas junto a las mías y saber que estamos caminando juntos.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">7</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tus detalles</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Esas pequeñas cosas que haces o dices sin darte cuenta y que demuestran lo mucho que te importo.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">8</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Tu olor <span class="text-xs font-normal text-roseSoft-400 italic">(déjame en paz)</span></h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Aunque me digas cosas, sabes perfectamente que tu aroma es de mis cosas favoritas en el mundo y se me queda grabado.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">9</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Cómo me quieres</h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">La forma tan bonita, sincera y especial en la que me haces sentir amado todos los días.</p>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-white/90 border border-roseSoft-100 hover:border-roseSoft-300 hover:shadow-md transition-all group">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-roseSoft-100 text-roseSoft-500 font-bold text-sm flex items-center justify-center group-hover:bg-roseSoft-400 group-hover:text-white transition-colors">10</span>
+                        <h3 class="font-bold text-slate-800 text-lg">Que te preocupes por mí <span class="text-xs font-normal text-roseSoft-400 italic">(como yo de ti)</span></h3>
+                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">Saber que estás al pendiente de mí, así como yo siempre voy a estar cuidándote y pendiente de ti.</p>
+                </div>
+
+            </div>
+
+            <!-- Cierre destacado de las 10 razones -->
+            <div class="mt-8 p-6 rounded-2xl bg-gradient-to-r from-roseSoft-100/80 via-roseSoft-50 to-roseSoft-100/80 border border-roseSoft-200 text-center">
+                <p class="font-serif text-2xl sm:text-3xl font-bold text-roseSoft-500">
+                    En resumen: amo TODO de ti. ❤️
+                </p>
+                <p class="text-sm text-slate-600 mt-1">Con tus virtudes, tus locuras y cada pequeño detalle que te hace ser tú.</p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: DETALLES EXTRA / LO QUE SIGNIFICAS PARA MÍ -->
+        <section id="promesas" class="reveal glass-card rounded-3xl p-7 sm:p-12">
+            <div class="text-center max-w-xl mx-auto mb-8">
+                <span class="text-xs font-bold uppercase tracking-widest text-roseSoft-400">Para recordarte siempre</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-800 mt-1">Lo que eres para mí</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div class="p-6 rounded-2xl bg-white/80 border border-roseSoft-100 text-center">
+                    <div class="w-12 h-12 mx-auto rounded-2xl bg-roseSoft-100 text-roseSoft-500 flex items-center justify-center mb-4">
+                        <i data-lucide="sun" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-serif font-bold text-lg text-slate-800 mb-2">Mi Paz</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Eres ese lugar seguro al que siempre quiero volver después de cualquier día pesado.
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-white/80 border border-roseSoft-100 text-center">
+                    <div class="w-12 h-12 mx-auto rounded-2xl bg-roseSoft-100 text-roseSoft-500 flex items-center justify-center mb-4">
+                        <i data-lucide="infinity" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-serif font-bold text-lg text-slate-800 mb-2">Mi Elección</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        En los días buenos y en los difíciles, te elegiría a ti una y mil veces sin dudarlo.
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-white/80 border border-roseSoft-100 text-center">
+                    <div class="w-12 h-12 mx-auto rounded-2xl bg-roseSoft-100 text-roseSoft-500 flex items-center justify-center mb-4">
+                        <i data-lucide="stars" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-serif font-bold text-lg text-slate-800 mb-2">Mi Futuro</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        Todos mis planes tienen más sentido desde que estás tú formando parte de ellos.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Botón interactivo para mensajes sorpresa -->
+            <div class="mt-8 text-center">
+                <button id="btn-nota-rapida" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-roseSoft-50 hover:bg-roseSoft-100 text-roseSoft-600 border border-roseSoft-200 text-sm font-semibold transition-all active:scale-95 cursor-pointer">
+                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    <span>Toca para leer un recordatorio más</span>
+                </button>
+                <p id="texto-nota-rapida" class="mt-3 font-serif italic text-lg text-roseSoft-500 min-h-[28px] transition-opacity duration-300">
+                    "Eres lo más bonito que me ha pasado."
+                </p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3.5: VALES DE AMOR INTERACTIVOS -->
+        <section id="vales" class="reveal glass-card rounded-3xl p-7 sm:p-12">
+            <div class="text-center max-w-xl mx-auto mb-8">
+                <span class="text-xs font-bold uppercase tracking-widest text-roseSoft-400">Canjeables cuando quieras</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-800 mt-1">Vales especiales para ti 🎟️</h2>
+                <p class="text-slate-500 text-sm sm:text-base mt-2">
+                    Toca cualquiera de estos vales para activarlo y tómale captura para cobrármelo cuando quieras:
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <button onclick="canjearVale(this)" class="coupon-card p-5 rounded-2xl text-left relative overflow-hidden cursor-pointer group">
+                    <div class="flex justify-between items-start">
+                        <span class="text-2xl">🍔🍕</span>
+                        <span class="badge-estado text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-roseSoft-100 text-roseSoft-500">Disponible</span>
+                    </div>
+                    <h3 class="font-serif font-bold text-lg text-slate-800 mt-3">Cita de comida favorita</h3>
+                    <p class="text-xs text-slate-600 mt-1">Válido por ir a comer exactamente lo que se te antoje, sin excusas.</p>
+                </button>
+
+                <button onclick="canjearVale(this)" class="coupon-card p-5 rounded-2xl text-left relative overflow-hidden cursor-pointer group">
+                    <div class="flex justify-between items-start">
+                        <span class="text-2xl">🫂❤️</span>
+                        <span class="badge-estado text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-roseSoft-100 text-roseSoft-500">Disponible</span>
+                    </div>
+                    <h3 class="font-serif font-bold text-lg text-slate-800 mt-3">Abrazos infinitos y besos.</h3>
+                    <p class="text-xs text-slate-600 mt-1">Para esos días donde solo quieres estar abrazada y tranquila.</p>
+                </button>
+
+                <button onclick="canjearVale(this)" class="coupon-card p-5 rounded-2xl text-left relative overflow-hidden cursor-pointer group">
+                    <div class="flex justify-between items-start">
+                        <span class="text-2xl">🎬🍿</span>
+                        <span class="badge-estado text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-roseSoft-100 text-roseSoft-500">Disponible</span>
+                    </div>
+                    <h3 class="font-serif font-bold text-lg text-slate-800 mt-3">Noche de peliculas tú eliges</h3>
+                    <p class="text-xs text-slate-600 mt-1">Tú escoges la película, las botanas y yo pongo toda la atención.</p>
+                </button>
+
+                <button onclick="canjearVale(this)" class="coupon-card p-5 rounded-2xl text-left relative overflow-hidden cursor-pointer group">
+                    <div class="flex justify-between items-start">
+                        <span class="text-2xl">✨🎁</span>
+                        <span class="badge-estado text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-roseSoft-100 text-roseSoft-500">Disponible</span>
+                    </div>
+                    <h3 class="font-serif font-bold text-lg text-slate-800 mt-3">Tarjeta de antojo extra.</h3>
+                    <p class="text-xs text-slate-600 mt-1">Un dulce, un café o cualquier detallito que quieras en el momento.</p>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3.8: ORÁCULO DE CITAS / RULETA DE PLANES -->
+        <section id="planes" class="reveal glass-card rounded-3xl p-7 sm:p-12 text-center">
+            <span class="text-xs font-bold uppercase tracking-widest text-roseSoft-400">¿Qué hacer hoy?</span>
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-800 mt-1">Oráculo de nuestras citas 🎡</h2>
+            <p class="text-slate-500 text-sm sm:text-base mt-2 max-w-md mx-auto">
+                Gira la ruleta y deja que el destino elija nuestra próxima salida juntos:
+            </p>
+
+            <div class="mt-7 max-w-md mx-auto bg-white/90 border-2 border-roseSoft-200 rounded-3xl p-6 shadow-sm">
+                <div id="plan-emoji" class="text-4xl mb-2">✨</div>
+                <p id="plan-resultado" class="font-serif text-xl sm:text-2xl font-bold text-slate-800 min-h-[64px] flex items-center justify-center">
+                    Toca el botón para descubrir el plan
+                </p>
+                <p id="plan-detalle" class="text-xs text-slate-500 mt-1 min-h-[20px]">
+                    ¡Prometo que la vamos a pasar increíble!
+                </p>
+
+                <button id="btn-girar-plan" onclick="girarOraculo()" class="mt-5 px-6 py-3 rounded-full bg-gradient-to-r from-roseSoft-400 to-roseSoft-500 text-white font-semibold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer inline-flex items-center gap-2">
+                    <i data-lucide="shuffle" class="w-4 h-4"></i>
+                    <span>Elegir plan al azar</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: EL MINIJUEGO MEJORADO -->
+        <section id="juego-seccion" class="reveal glass-card rounded-3xl p-7 sm:p-12 text-center">
+            <span class="text-xs font-bold uppercase tracking-widest text-roseSoft-400">Sorpresa interactiva</span>
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-800 mt-1">Un jueguito para ti ❤️</h2>
+            <p class="text-slate-600 mt-2 text-sm sm:text-base max-w-md mx-auto">
+                Atrapa <strong>10 corazones</strong> antes de que se acabe el tiempo para desbloquear tu mensaje especial.
+            </p>
+
+            <!-- Barra de estado del juego -->
+            <div class="mt-6 max-w-md mx-auto">
+                <div class="flex items-center justify-between text-sm font-semibold mb-2 px-1">
+                    <span class="flex items-center gap-1.5 text-slate-600 bg-white px-3 py-1 rounded-full border border-roseSoft-100 shadow-xs">
+                        <i data-lucide="clock" class="w-4 h-4 text-roseSoft-400"></i>
+                        Tiempo: <span id="tiempo" class="text-roseSoft-500 font-bold">240</span>s
+                    </span>
+                    <span class="flex items-center gap-1.5 text-slate-600 bg-white px-3 py-1 rounded-full border border-roseSoft-100 shadow-xs">
+                        <i data-lucide="heart" class="w-4 h-4 text-roseSoft-400 fill-current"></i>
+                        Puntos: <span id="puntos" class="text-roseSoft-500 font-bold">0</span>/10
+                    </span>
+                </div>
+
+                <!-- Barra de progreso visual -->
+                <div class="w-full h-3 bg-roseSoft-100 rounded-full overflow-hidden p-0.5 border border-roseSoft-200">
+                    <div id="barra-progreso" class="h-full bg-gradient-to-r from-roseSoft-400 to-roseSoft-500 rounded-full transition-all duration-300" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- Arena de juego -->
+            <div id="juego" class="game-arena mt-6 w-full h-64 sm:h-72 rounded-3xl border-2 border-roseSoft-200 relative overflow-hidden shadow-inner select-none">
+                
+                <!-- Mensaje dinámico dentro de la arena (ej. si se acaba el tiempo, sin usar alert) -->
+                <div id="mensaje-juego" class="hidden absolute inset-0 bg-white/90 backdrop-blur-xs z-20 flex-col items-center justify-center p-6 text-center">
+                    <p id="mensaje-juego-titulo" class="font-serif text-2xl font-bold text-roseSoft-500"></p>
+                    <p id="mensaje-juego-desc" class="text-slate-600 text-sm mt-2"></p>
+                    <button onclick="iniciarJuego()" class="mt-4 px-5 py-2 rounded-full bg-roseSoft-400 hover:bg-roseSoft-500 text-white text-sm font-semibold shadow-md transition-all">
+                        Volver a intentar ❤️
+                    </button>
+                </div>
+
+                <!-- Botón del corazón atrapable -->
+                <button id="corazon" aria-label="Atrapar corazón" class="absolute left-[45%] top-[40%] text-4xl sm:text-5xl cursor-pointer transition-all duration-200 hover:scale-110 active:scale-90 focus:outline-none p-2">
+                    ❤️
+                </button>
+            </div>
+
+            <div class="mt-4">
+                <button onclick="iniciarJuego()" class="text-xs text-slate-400 hover:text-roseSoft-500 underline transition-colors">
+                    Reiniciar juego
+                </button>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4.5: MINIJUEGO LOVE DASH (GENERATIVO ESTILO GEOMETRY DASH) -->
+        <section id="lovedash-seccion" class="reveal glass-card rounded-3xl p-7 sm:p-10 text-center">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4 text-left">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-widest text-roseSoft-400">Segundo Minijuego Arcade</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-800 mt-0.5">Love Dash ❤️</h2>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-bold">
+                    <div class="px-3 py-1.5 rounded-full bg-roseSoft-50 border border-roseSoft-200 text-roseSoft-600">
+                        Distancia: <span id="ui-distancia">0</span>m
+                    </div>
+                    <div class="px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-600">
+                        Corazones: <span id="ui-monedas">0</span>/10 💖
+                    </div>
+                    <div class="hidden sm:block px-3 py-1.5 rounded-full bg-slate-100 text-slate-600">
+                        Récord: <span id="ui-record">0</span>m
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contenedor Responsivo del Canvas -->
+            <div id="canvas-wrapper" class="relative w-full h-64 sm:h-72 rounded-3xl border-2 border-roseSoft-200 overflow-hidden shadow-inner bg-gradient-to-b from-white to-roseSoft-50 select-none">
+                <canvas id="dashCanvas"></canvas>
+
+                <!-- Pantalla superpuesta (Inicio / Game Over / Victoria) -->
+                <div id="overlay-pantalla" class="absolute inset-0 bg-white/85 backdrop-blur-xs flex flex-col items-center justify-center p-6 text-center transition-opacity">
+                    <div id="overlay-icono" class="text-4xl sm:text-5xl mb-2">💖</div>
+                    <h3 id="overlay-titulo" class="font-serif text-2xl sm:text-3xl font-bold text-roseSoft-500">¡Corre al corazón!</h3>
+                    <p id="overlay-desc" class="text-xs sm:text-sm text-slate-600 max-w-md mt-2">
+                        Salta los pinchos y plataformas para atrapar <strong>10 corazones</strong> (o llegar a <strong>500m</strong>) en una sola carrera.
+                    </p>
+                    <button id="btn-jugar-dash" class="mt-4 px-6 py-2.5 rounded-full bg-gradient-to-r from-roseSoft-400 to-roseSoft-500 text-white font-bold text-sm shadow-md hover:scale-105 active:scale-95 transition-transform cursor-pointer">
+                        Empezar carrera ✨
+                    </button>
+                </div>
+            </div>
+
+            <p class="mt-3 text-xs text-slate-500">
+                Controles: <strong>Toca el cuadro del juego</strong>, haz <strong>Clic</strong> o presiona <strong>Espacio / Flecha Arriba</strong> para saltar.
+            </p>
+        </section>
+
+        <!-- SECCIÓN 5: CÁPSULA SECRETA CON CONTRASEÑA -->
+        <section id="secreto" class="reveal glass-card rounded-3xl p-7 sm:p-12 text-center border-2 border-roseSoft-200">
+            <div class="w-12 h-12 mx-auto rounded-2xl bg-roseSoft-100 text-roseSoft-500 flex items-center justify-center mb-3">
+                <i id="icono-candado" data-lucide="lock" class="w-6 h-6"></i>
+            </div>
+            <span class="text-xs font-bold uppercase tracking-widest text-roseSoft-400">Solo para tus ojos</span>
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-slate-800 mt-1">Mensaje Secreto 🔐</h2>
+            
+            <div id="bloque-candado" class="mt-4 max-w-md mx-auto">
+                <p class="text-sm text-slate-600">
+                    Para desbloquear esta nota oculta, escribe la contraseña correcta.
+                </p>
+                <div class="mt-2 inline-block px-4 py-1.5 rounded-full bg-roseSoft-50 border border-roseSoft-200 text-xs font-semibold text-roseSoft-600">
+                    💡 Pista: Un día muy importante para mí
+                </div>
+
+                <div class="mt-5 flex flex-col sm:flex-row gap-2 justify-center">
+                    <input id="input-password" type="text" placeholder="Escribe la fecha aquí..." class="px-4 py-2.5 rounded-full bg-white border border-roseSoft-200 text-sm text-center sm:text-left focus:outline-none focus:border-roseSoft-400 w-full sm:w-64">
+                    <button onclick="verificarPassword()" class="px-6 py-2.5 rounded-full bg-roseSoft-400 hover:bg-roseSoft-500 text-white text-sm font-semibold shadow-sm transition-all cursor-pointer">
+                        Desbloquear
+                    </button>
+                </div>
+                <p id="error-password" class="hidden text-xs text-roseSoft-500 font-semibold mt-2">
+                    Mmm casi... intenta escribir la fecha completa o con números ❤️
+                </p>
+            </div>
+
+            <!-- Mensaje desbloqueado -->
+            <div id="mensaje-secreto-contenido" class="hidden mt-6 max-w-lg mx-auto bg-gradient-to-br from-roseSoft-50 to-white p-6 sm:p-8 rounded-2xl border border-roseSoft-200 text-left shadow-inner">
+                <p class="font-serif italic text-xl text-roseSoft-500 mb-3">¡Lo adivinaste! ❤️ (9 de febrero de 2009)</p>
+                <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+                    Si llegaste hasta acá y pusiste mi cumpleaños, solo quería decirte gracias por conocerme tan bien y por ser parte de mi vida. Eres mi mejor regalo todos los días, Julia. Nunca dudes de lo muchísimo que te amo y de lo importante que eres para mí.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="relative z-10 text-center pb-10 px-4 text-xs sm:text-sm text-slate-500">
+        <p>Hecho con todo el cariño del mundo por <strong class="text-roseSoft-500">Arturo</strong> para <strong class="text-roseSoft-500">Julia</strong> ❤️</p>
+    </footer>
+
+    <!-- PANTALLA DE PREMIO AL GANAR EL JUEGO -->
+    <div id="premio" class="hidden fixed inset-0 z-50 bg-gradient-to-br from-roseSoft-400 via-roseSoft-500 to-pink-500 text-white flex-col items-center justify-center text-center p-6 backdrop-blur-md transition-opacity duration-500">
+        <div class="max-w-lg mx-auto bg-white/15 backdrop-blur-lg border border-white/30 rounded-3xl p-8 sm:p-12 shadow-2xl animate-pulse-soft">
+            <div class="text-5xl sm:text-6xl mb-4">💖✨💖</div>
+            <h1 class="font-serif text-4xl sm:text-6xl font-bold tracking-tight drop-shadow-md">
+                TE AMO JULIA
+            </h1>
+            <p class="mt-6 text-lg sm:text-2xl font-light leading-relaxed text-white/95">
+                Gracias por estar conmigo.<br><br>
+                <span class="font-semibold">Eres mi lugar favorito.</span><br>
+                Te elegiría una y mil veces más. ❤️
+            </p>
+            <button id="cerrar-premio" class="mt-8 px-7 py-3 rounded-full bg-white text-roseSoft-500 font-bold text-sm sm:text-base shadow-lg hover:bg-roseSoft-50 transition-all cursor-pointer">
+                Seguir leyendo tu página ❤️
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Inicializar iconos de Lucide
+        lucide.createIcons();
+
+        // 1. GENERADOR DE CORAZONES FLOTANTES DE FONDO
+        const heartsContainer = document.getElementById("hearts-container");
+        const heartSymbols = ["❤️", "💖", "💕", "🌸", "💗"];
+        
+        for (let i = 0; i < 40; i++) {
+            const heart = document.createElement("div");
+            heart.className = "floating-heart";
+            heart.innerText = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+            
+            heart.style.left = (Math.random() * 98) + "vw";
+            heart.style.fontSize = (16 + Math.random() * 20) + "px";
+            heart.style.animationDuration = (9 + Math.random() * 11) + "s";
+            heart.style.animationDelay = (Math.random() * 10) + "s";
+            
+            heartsContainer.appendChild(heart);
+        }
+
+        // 2. ANIMACIÓN SUAVE AL HACER SCROLL (Intersection Observer)
+        const revealElements = document.querySelectorAll(".reveal");
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("active");
+                }
+            });
+        }, { threshold: 0.12 });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // 3. RECORDATORIOS ROMÁNTICOS INTERACTIVOS
+        const notasRomanticas = [
+            "Eres lo más bonito que me ha pasado.",
+            "Contigo hasta los días normales se sienten especiales.",
+            "No importa qué pase, siempre voy a estar para ti.",
+            "Me encanta absolutamente todo de ti, Julia.",
+            "Eres mi persona favorita en todo el mundo.",
+            "Gracias por hacerme tan feliz cada día."
+        ];
+        let indiceNota = 0;
+        const btnNota = document.getElementById("btn-nota-rapida");
+        const textoNota = document.getElementById("texto-nota-rapida");
+
+        btnNota.addEventListener("click", () => {
+            textoNota.style.opacity = "0";
+            setTimeout(() => {
+                indiceNota = (indiceNota + 1) % notasRomanticas.length;
+                textoNota.innerText = `"${notasRomanticas[indiceNota]}"`;
+                textoNota.style.opacity = "1";
+            }, 200);
+        });
+
+        // 4. LÓGICA DEL JUEGO DE ATRAPAR CORAZONES
+        let puntos = 0;
+        let tiempo = 240;
+        let timer = null;
+
+        const corazon = document.getElementById("corazon");
+        const puntosSpan = document.getElementById("puntos");
+        const tiempoSpan = document.getElementById("tiempo");
+        const barraProgreso = document.getElementById("barra-progreso");
+        const premioModal = document.getElementById("premio");
+        const cerrarPremioBtn = document.getElementById("cerrar-premio");
+        const mensajeJuego = document.getElementById("mensaje-juego");
+        const mensajeJuegoTitulo = document.getElementById("mensaje-juego-titulo");
+        const mensajeJuegoDesc = document.getElementById("mensaje-juego-desc");
+
+        function iniciarJuego() {
+            puntos = 0;
+            tiempo = 240;
+
+            puntosSpan.innerText = puntos;
+            tiempoSpan.innerText = tiempo;
+            barraProgreso.style.width = "0%";
+
+            mensajeJuego.classList.add("hidden");
+            mensajeJuego.classList.remove("flex");
+
+            corazon.style.display = "block";
+            corazon.style.left = "45%";
+            corazon.style.top = "40%";
+            corazon.style.transform = "scale(1) rotate(0deg)";
+
+            clearInterval(timer);
+
+            timer = setInterval(() => {
+                tiempo--;
+                tiempoSpan.innerText = tiempo;
+
+                if (tiempo <= 0) {
+                    clearInterval(timer);
+                    corazon.style.display = "none";
+
+                    // Mostrar mensaje elegante dentro de la arena en lugar de alert()
+                    mensajeJuegoTitulo.innerText = "❤️ ¡Se acabó el tiempo!";
+                    mensajeJuegoDesc.innerText = `Conseguiste ${puntos} de 10 corazones. ¡Inténtalo de nuevo!`;
+                    mensajeJuego.classList.remove("hidden");
+                    mensajeJuego.classList.add("flex");
+                }
+            }, 1000);
+        }
+
+        function moverYContarCorazon(e) {
+            if (e) e.preventDefault();
+            if (tiempo <= 0 || puntos >= 10) return;
+
+            puntos++;
+            puntosSpan.innerText = puntos;
+            barraProgreso.style.width = `${(puntos / 10) * 100}%`;
+
+            // Posición aleatoria dentro de límites seguros para que no se corte
+            const nuevaX = 8 + Math.random() * 76;
+            const nuevaY = 10 + Math.random() * 68;
+            const rotacion = (Math.random() * 60) - 30;
+
+            corazon.style.left = nuevaX + "%";
+            corazon.style.top = nuevaY + "%";
+            corazon.style.transform = `scale(1.35) rotate(${rotacion}deg)`;
+
+            setTimeout(() => {
+                corazon.style.transform = "scale(1) rotate(0deg)";
+            }, 160);
+
+            if (puntos === 10) {
+                clearInterval(timer);
+                corazon.style.display = "none";
+                lanzarConfetiCorazones();
+
+                premioModal.classList.remove("hidden");
+                premioModal.classList.add("flex");
+            }
+        }
+
+        // 5. CANJEAR VALES DE AMOR
+        function canjearVale(boton) {
+            const badge = boton.querySelector(".badge-estado");
+            const yaCanjeado = boton.classList.contains("redeemed");
+
+            if (!yaCanjeado) {
+                boton.classList.add("redeemed");
+                badge.innerText = "¡Activado! 💖";
+                badge.classList.remove("bg-roseSoft-100", "text-roseSoft-500");
+                badge.classList.add("bg-roseSoft-500", "text-white");
+            } else {
+                boton.classList.remove("redeemed");
+                badge.innerText = "Disponible";
+                badge.classList.remove("bg-roseSoft-500", "text-white");
+                badge.classList.add("bg-roseSoft-100", "text-roseSoft-500");
+            }
+        }
+
+        // 6. LLUVIA DE CONFETI DE CORAZONES AL GANAR
+        function lanzarConfetiCorazones() {
+            const iconos = ["❤️", "💖", "✨", "💕", "🌸"];
+            for (let i = 0; i < 45; i++) {
+                setTimeout(() => {
+                    const confeti = document.createElement("div");
+                    confeti.innerText = iconos[Math.floor(Math.random() * iconos.length)];
+                    confeti.style.position = "fixed";
+                    confeti.style.left = Math.random() * 100 + "vw";
+                    confeti.style.top = "-30px";
+                    confeti.style.fontSize = (18 + Math.random() * 22) + "px";
+                    confeti.style.zIndex = "60";
+                    confeti.style.pointerEvents = "none";
+                    confeti.style.transition = "transform 2.8s ease-in, opacity 2.8s ease-in";
+                    document.body.appendChild(confeti);
+
+                    requestAnimationFrame(() => {
+                        confeti.style.transform = `translateY(105vh) rotate(${Math.random() * 360}deg)`;
+                        confeti.style.opacity = "0";
+                    });
+
+                    setTimeout(() => confeti.remove(), 3000);
+                }, i * 40);
+            }
+        }
+
+        // 7. MÚSICA AMBIENTAL ROMÁNTICA SUAVE (SIN DISTORSIÓN NI TRABAS)
+        let musicaActiva = false;
+        let loopMusica = null;
+        let arpaSuave = null;
+
+        const btnMusica = document.getElementById("btn-musica");
+        const iconoMusica = document.getElementById("icono-musica");
+
+        btnMusica.addEventListener("click", async () => {
+            if (!musicaActiva) {
+                await Tone.start();
+                if (!arpaSuave) {
+                    // Filtro cálido para quitar cualquier brillo agudo o molesto
+                    const filtroCalido = new Tone.Filter(1200, "lowpass").toDestination();
+
+                    // Sintetizador ligero y cristalino (como cajita de música o piano suave)
+                    arpaSuave = new Tone.PolySynth(Tone.Synth, {
+                        maxPolyphony: 6,
+                        oscillator: { type: "sine" },
+                        envelope: {
+                            attack: 0.05,
+                            decay: 0.8,
+                            sustain: 0.2,
+                            release: 1.5
+                        }
+                    }).connect(filtroCalido);
+                    arpaSuave.volume.value = -10;
+
+                    // Arpegio dulce y melódico en Do Mayor / La Menor (estilo balada romántica)
+                    const notasMelodia = [
+                        // Compás 1 (Do Mayor cálido)
+                        ["C4", "E4"], "G4", "C5", "B4", "G4", "E4",
+                        // Compás 2 (La Menor dulce)
+                        ["A3", "C4"], "E4", "A4", "G4", "E4", "C4",
+                        // Compás 3 (Fa Mayor tierno)
+                        ["F3", "A3"], "C4", "F4", "E4", "C4", "A3",
+                        // Compás 4 (Sol Mayor suave)
+                        ["G3", "B3"], "D4", "G4", "F4", "D4", "B3"
+                    ];
+
+                    let paso = 0;
+                    Tone.Transport.bpm.value = 84;
+
+                    loopMusica = new Tone.Loop((time) => {
+                        const notaActual = notasMelodia[paso % notasMelodia.length];
+                        arpaSuave.triggerAttackRelease(notaActual, "4n", time);
+                        paso++;
+                    }, "8n").start(0);
+                }
+                Tone.Transport.start();
+                musicaActiva = true;
+                iconoMusica.setAttribute("data-lucide", "volume-2");
+                btnMusica.classList.add("bg-roseSoft-200");
+            } else {
+                Tone.Transport.pause();
+                musicaActiva = false;
+                iconoMusica.setAttribute("data-lucide", "volume-x");
+                btnMusica.classList.remove("bg-roseSoft-200");
+            }
+            lucide.createIcons();
+        });
+
+        // Soporte tanto para clic de ratón como para toque rápido en celular
+        corazon.addEventListener("click", moverYContarCorazon);
+
+        // 8. CONTADOR EN VIVO DESDE EL 1 DE OCTUBRE DE 2024
+        const fechaInicio = new Date("2024-10-01T00:00:00");
+        function actualizarContador() {
+            const ahora = new Date();
+            const diferencia = ahora - fechaInicio;
+
+            if (diferencia > 0) {
+                const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+                const horas = Math.floor((diferencia / (1000 * 60 * 60)) % 24);
+                const minutos = Math.floor((diferencia / 1000 / 60) % 60);
+                const segundos = Math.floor((diferencia / 1000) % 60);
+
+                document.getElementById("cnt-dias").innerText = dias;
+                document.getElementById("cnt-horas").innerText = horas;
+                document.getElementById("cnt-minutos").innerText = minutos;
+                document.getElementById("cnt-segundos").innerText = segundos;
+            }
+        }
+        setInterval(actualizarContador, 1000);
+        actualizarContador();
+
+        // 9. ABRIR SOBRE 3D DE LA CARTA PRINCIPAL
+        function abrirSobre() {
+            const sobre = document.getElementById("sobre-cerrado");
+            const carta = document.getElementById("contenido-carta");
+            sobre.classList.add("open");
+
+            setTimeout(() => {
+                sobre.style.display = "none";
+                carta.classList.remove("hidden");
+                requestAnimationFrame(() => {
+                    carta.classList.remove("opacity-0", "translate-y-4");
+                });
+            }, 650);
+        }
+
+        // 10. ORÁCULO / RULETA DE PLANES CREATIVOS
+        const listaPlanes = [
+            { emoji: "🎬🍿", titulo: "Ir al cine juntos", detalle: "Palomitas grandes, refresco y la película que tú elijas." },
+            { emoji: "🌳🌅", titulo: "Ir a pasear al parque / periférico", detalle: "Caminar tranquilos, platicar de todo y disfrutar el rato juntos." },
+            { emoji: "🍨🍰", titulo: "Ir a comer tu postre favorito", detalle: "Porque siempre hay espacio para algo dulce contigo." },
+            { emoji: "🛍️✨", titulo: "Tarde de ir de compras", detalle: "Acompañarte a ver tiendas, probarte cosas y consentirte." },
+            { emoji: "🚗🎶", titulo: "Vuelta en coche con nuestra música", detalle: "Cantar a todo pulmón nuestras canciones favoritas sin prisa." },
+            { emoji: "🌮🥤", titulo: "Cita nocturna por algo rico de cenar", detalle: "Un plan improvisado para cerrar el día con broche de oro." }
+        ];
+
+        function girarOraculo() {
+            const btn = document.getElementById("btn-girar-plan");
+            const emojiEl = document.getElementById("plan-emoji");
+            const tituloEl = document.getElementById("plan-resultado");
+            const detalleEl = document.getElementById("plan-detalle");
+
+            btn.disabled = true;
+            let vueltas = 0;
+            const totalVueltas = 14;
+
+            const intervalo = setInterval(() => {
+                const temp = listaPlanes[vueltas % listaPlanes.length];
+                emojiEl.innerText = temp.emoji;
+                tituloEl.innerText = temp.titulo;
+                detalleEl.innerText = "Eligiendo...";
+                vueltas++;
+
+                if (vueltas >= totalVueltas) {
+                    clearInterval(intervalo);
+                    const elegido = listaPlanes[Math.floor(Math.random() * listaPlanes.length)];
+                    emojiEl.innerText = elegido.emoji;
+                    tituloEl.innerText = elegido.titulo;
+                    detalleEl.innerText = elegido.detalle;
+                    btn.disabled = false;
+                }
+            }, 85);
+        }
+
+        // 11. CÁPSULA SECRETA CON CONTRASEÑA (9 DE FEBRERO DE 2009)
+        function verificarPassword() {
+            const input = document.getElementById("input-password").value.toLowerCase().trim();
+            const errorEl = document.getElementById("error-password");
+            const bloqueCandado = document.getElementById("bloque-candado");
+            const contenidoSecreto = document.getElementById("mensaje-secreto-contenido");
+            const iconoCandado = document.getElementById("icono-candado");
+
+            // Acepta distintas formas en que Julia pueda escribir tu cumpleaños
+            const respuestasValidas = [
+                "9 de febrero del 2009",
+                "9 de febrero de 2009",
+                "09 de febrero del 2009",
+                "09 de febrero de 2009",
+                "9/02/2009",
+                "09/02/2009",
+                "9/2/2009",
+                "09-02-2009",
+                "9-02-2009",
+                "9 de febrero",
+                "09 de febrero"
+            ];
+
+            if (respuestasValidas.includes(input)) {
+                errorEl.classList.add("hidden");
+                bloqueCandado.classList.add("hidden");
+                contenidoSecreto.classList.remove("hidden");
+                iconoCandado.setAttribute("data-lucide", "unlock");
+                lucide.createIcons();
+                lanzarConfetiCorazones();
+            } else {
+                errorEl.classList.remove("hidden");
+            }
+        }
+
+        // Permitir desbloquear presionando Enter en el input
+        document.getElementById("input-password").addEventListener("keydown", (e) => {
+            if (e.key === "Enter") verificarPassword();
+        });
+
+        cerrarPremioBtn.addEventListener("click", () => {
+            premioModal.classList.add("hidden");
+            premioModal.classList.remove("flex");
+            iniciarJuego();
+        });
+
+        // 12. LÓGICA DE LOVE DASH (CON TUS FÍSICAS CALIBRADAS Y MÁS OBSTÁCULOS)
+        const dashCanvas = document.getElementById("dashCanvas");
+        const dashCtx = dashCanvas.getContext("2d");
+        const dashWrapper = document.getElementById("canvas-wrapper");
+
+        const uiDistancia = document.getElementById("ui-distancia");
+        const uiMonedas = document.getElementById("ui-monedas");
+        const uiRecord = document.getElementById("ui-record");
+        const dashOverlay = document.getElementById("overlay-pantalla");
+        const dashOverlayIcono = document.getElementById("overlay-icono");
+        const dashOverlayTitulo = document.getElementById("overlay-titulo");
+        const dashOverlayDesc = document.getElementById("overlay-desc");
+        const btnJugarDash = document.getElementById("btn-jugar-dash");
+
+        let groundY = 0;
+        function resizeDashCanvas() {
+            dashCanvas.width = dashWrapper.clientWidth;
+            dashCanvas.height = dashWrapper.clientHeight;
+            groundY = dashCanvas.height - 40;
+            if (dashEstado !== "JUGANDO") {
+                dashPlayer.y = groundY - dashPlayer.size;
+            }
+        }
+        window.addEventListener("resize", resizeDashCanvas);
+
+        let dashEstado = "INICIO";
+        let dashVelocidad = 5;
+        let dashDistancia = 0;
+        let dashRecord = 0;
+        let dashCorazones = 0;
+        let dashProximoSpawn = 55;
+
+        // Tus valores exactos de físicas
+        const dashPlayer = {
+            x: 68,
+            y: 0,
+            size: 32,
+            vy: 0,
+            gravity: 0.78,
+            jumpForce: -10.8,
+            enSuelo: true,
+            rotacion: 0
+        };
+
+        let dashObstaculos = [];
+        let dashPlataformas = [];
+        let dashMonedas = [];
+        let dashParticulas = [];
+        let dashNubes = [];
+
+        for (let i = 0; i < 6; i++) {
+            dashNubes.push({
+                x: Math.random() * 800,
+                y: 28 + Math.random() * 100,
+                speed: 0.4 + Math.random() * 0.5
+            });
+        }
+
+        function crearDashParticulas(x, y, color, cantidad) {
+            for (let i = 0; i < cantidad; i++) {
+                dashParticulas.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.8) * 6,
+                    size: 3 + Math.random() * 4,
+                    color: color,
+                    vida: 1
+                });
+            }
+        }
+
+        // GENERADOR PROCEDURAL AMPLIADO (7 patrones variados de obstáculos)
+        function generarPatronDash() {
+            const tipoPatron = Math.floor(Math.random() * 7);
+            const startX = dashCanvas.width + 40;
+
+            if (tipoPatron === 0) {
+                // Patrón 1: Pincho simple + Corazón arriba
+                dashObstaculos.push({ x: startX, y: groundY, w: 28, h: 32 });
+                dashMonedas.push({ x: startX + 14, y: groundY - 75, r: 12, recogida: false, fase: 0 });
+                dashProximoSpawn = Math.floor(82 + Math.random() * 30);
+            } 
+            else if (tipoPatron === 1) {
+                // Patrón 2: Doble pincho pegado
+                dashObstaculos.push({ x: startX, y: groundY, w: 26, h: 30 });
+                dashObstaculos.push({ x: startX + 26, y: groundY, w: 26, h: 30 });
+                dashProximoSpawn = Math.floor(100 + Math.random() * 30);
+            } 
+            else if (tipoPatron === 2) {
+                // Patrón 3: Plataforma flotante con pincho abajo y premio arriba
+                const platW = 115;
+                const platY = groundY - 60;
+                dashPlataformas.push({ x: startX, y: platY, w: platW, h: 16 });
+                dashObstaculos.push({ x: startX + 44, y: groundY, w: 26, h: 28 });
+                dashMonedas.push({ x: startX + platW / 2, y: platY - 26, r: 12, recogida: false, fase: 1 });
+                dashProximoSpawn = Math.floor(120 + Math.random() * 30);
+            } 
+            else if (tipoPatron === 3) {
+                // Patrón 4: Salto rítmico doble (pincho -> corazón bajo -> pincho)
+                dashObstaculos.push({ x: startX, y: groundY, w: 26, h: 30 });
+                dashMonedas.push({ x: startX + 78, y: groundY - 22, r: 12, recogida: false, fase: 2 });
+                dashObstaculos.push({ x: startX + 155, y: groundY, w: 26, h: 30 });
+                dashProximoSpawn = Math.floor(140 + Math.random() * 25);
+            }
+            else if (tipoPatron === 4) {
+                // Patrón 5: Escalera de dos plataformas seguidas con fila de corazones
+                dashPlataformas.push({ x: startX, y: groundY - 48, w: 85, h: 15 });
+                dashObstaculos.push({ x: startX + 30, y: groundY, w: 26, h: 28 });
+                dashPlataformas.push({ x: startX + 125, y: groundY - 82, w: 95, h: 15 });
+                dashObstaculos.push({ x: startX + 155, y: groundY, w: 28, h: 32 });
+                dashMonedas.push({ x: startX + 172, y: groundY - 108, r: 12, recogida: false, fase: 0.5 });
+                dashProximoSpawn = Math.floor(165 + Math.random() * 30);
+            }
+            else if (tipoPatron === 5) {
+                // Patrón 6: Pincho alto central flanqueado por bloques bajos
+                dashPlataformas.push({ x: startX, y: groundY - 26, w: 45, h: 26 });
+                dashObstaculos.push({ x: startX + 52, y: groundY, w: 30, h: 38 });
+                dashMonedas.push({ x: startX + 67, y: groundY - 82, r: 12, recogida: false, fase: 1.5 });
+                dashProximoSpawn = Math.floor(110 + Math.random() * 30);
+            }
+            else {
+                // Patrón 7: Túnel con plataforma alta (puedes pasar por abajo o saltar encima)
+                dashPlataformas.push({ x: startX, y: groundY - 74, w: 125, h: 15 });
+                dashMonedas.push({ x: startX + 40, y: groundY - 22, r: 12, recogida: false, fase: 0 });
+                dashMonedas.push({ x: startX + 85, y: groundY - 22, r: 12, recogida: false, fase: 1 });
+                dashObstaculos.push({ x: startX + 165, y: groundY, w: 28, h: 32 });
+                dashProximoSpawn = Math.floor(155 + Math.random() * 25);
+            }
+        }
+
+        function saltarDash() {
+            if (dashEstado !== "JUGANDO") return;
+            if (dashPlayer.enSuelo) {
+                dashPlayer.vy = dashPlayer.jumpForce;
+                dashPlayer.enSuelo = false;
+                crearDashParticulas(dashPlayer.x + dashPlayer.size / 2, dashPlayer.y + dashPlayer.size, "#ff69b4", 7);
+            }
+        }
+
+        function iniciarCarreraDash() {
+            resizeDashCanvas();
+            dashEstado = "JUGANDO";
+            dashVelocidad = 5;
+            dashDistancia = 0;
+            dashCorazones = 0;
+            dashProximoSpawn = 45;
+
+            dashObstaculos = [];
+            dashPlataformas = [];
+            dashMonedas = [];
+            dashParticulas = [];
+
+            dashPlayer.y = groundY - dashPlayer.size;
+            dashPlayer.vy = 0;
+            dashPlayer.enSuelo = true;
+            dashPlayer.rotacion = 0;
+
+            uiDistancia.innerText = "0";
+            uiMonedas.innerText = "0";
+            dashOverlay.classList.add("hidden");
+        }
+
+        function terminarCarreraDash(gano) {
+            dashEstado = gano ? "VICTORIA" : "GAMEOVER";
+            const distFinal = Math.floor(dashDistancia);
+            if (distFinal > dashRecord) {
+                dashRecord = distFinal;
+                uiRecord.innerText = dashRecord;
+            }
+
+            dashOverlay.classList.remove("hidden");
+            if (gano) {
+                dashOverlayIcono.innerText = "👑💖";
+                dashOverlayTitulo.innerText = "¡Ganaste, Julia!";
+                dashOverlayDesc.innerText = `Recorriste ${distFinal}m y atrapaste ${dashCorazones} corazones. ¡Eres increíble!`;
+                btnJugarDash.innerText = "Jugar otra vez ✨";
+                lanzarConfetiCorazones();
+            } else {
+                dashOverlayIcono.innerText = "💥💗";
+                dashOverlayTitulo.innerText = "¡Casi lo logras!";
+                dashOverlayDesc.innerText = `Avanzaste ${distFinal}m y juntaste ${dashCorazones}/10 corazones. ¡Inténtalo de nuevo!`;
+                btnJugarDash.innerText = "Reintentar carrera 🔄";
+            }
+        }
+
+        btnJugarDash.addEventListener("click", (e) => {
+            e.stopPropagation();
+            iniciarCarreraDash();
+        });
+
+        dashWrapper.addEventListener("mousedown", saltarDash);
+        dashWrapper.addEventListener("touchstart", (e) => {
+            if (dashEstado === "JUGANDO") {
+                e.preventDefault();
+                saltarDash();
+            }
+        }, { passive: false });
+
+        window.addEventListener("keydown", (e) => {
+            // Evitar saltar si está escribiendo en la contraseña secreta
+            if (document.activeElement.tagName === "INPUT") return;
+            if (e.code === "Space" || e.code === "ArrowUp") {
+                if (dashEstado === "JUGANDO") {
+                    e.preventDefault();
+                    saltarDash();
+                }
+            }
+        });
+
+        function loopDash() {
+            dashCtx.clearRect(0, 0, dashCanvas.width, dashCanvas.height);
+
+            // Fondo parallax
+            dashCtx.font = "18px sans-serif";
+            dashCtx.globalAlpha = 0.25;
+            dashNubes.forEach(n => {
+                if (dashEstado === "JUGANDO") n.x -= n.speed;
+                if (n.x < -30) n.x = dashCanvas.width + 30;
+                dashCtx.fillText("💗", n.x, n.y);
+            });
+            dashCtx.globalAlpha = 1;
+
+            // Suelo
+            dashCtx.fillStyle = "#ffe4ec";
+            dashCtx.fillRect(0, groundY, dashCanvas.width, dashCanvas.height - groundY);
+            dashCtx.strokeStyle = "#ff69b4";
+            dashCtx.lineWidth = 3;
+            dashCtx.beginPath();
+            dashCtx.moveTo(0, groundY);
+            dashCtx.lineTo(dashCanvas.width, groundY);
+            dashCtx.stroke();
+
+            if (dashEstado === "JUGANDO") {
+                dashDistancia += dashVelocidad * 0.04;
+                uiDistancia.innerText = Math.floor(dashDistancia);
+                dashVelocidad = Math.min(9.5, 5 + dashDistancia * 0.008);
+
+                if (dashCorazones >= 10 || dashDistancia >= 500) {
+                    crearDashParticulas(dashPlayer.x + 16, dashPlayer.y + 16, "#ff69b4", 30);
+                    terminarCarreraDash(true);
+                }
+
+                dashProximoSpawn--;
+                if (dashProximoSpawn <= 0) {
+                    generarPatronDash();
+                }
+
+                dashPlayer.vy += dashPlayer.gravity;
+                dashPlayer.y += dashPlayer.vy;
+                dashPlayer.enSuelo = false;
+
+                if (dashPlayer.y + dashPlayer.size >= groundY) {
+                    dashPlayer.y = groundY - dashPlayer.size;
+                    dashPlayer.vy = 0;
+                    dashPlayer.enSuelo = true;
+                    dashPlayer.rotacion = Math.round(dashPlayer.rotacion / 90) * 90;
+                }
+
+                dashPlataformas.forEach(plat => {
+                    plat.x -= dashVelocidad;
+                    if (
+                        dashPlayer.vy >= 0 &&
+                        dashPlayer.x + dashPlayer.size - 6 > plat.x &&
+                        dashPlayer.x + 6 < plat.x + plat.w &&
+                        dashPlayer.y + dashPlayer.size >= plat.y &&
+                        dashPlayer.y + dashPlayer.size <= plat.y + plat.h + dashPlayer.vy + 2
+                    ) {
+                        dashPlayer.y = plat.y - dashPlayer.size;
+                        dashPlayer.vy = 0;
+                        dashPlayer.enSuelo = true;
+                        dashPlayer.rotacion = Math.round(dashPlayer.rotacion / 90) * 90;
+                    }
+                });
+
+                if (!dashPlayer.enSuelo) {
+                    dashPlayer.rotacion += 6.5;
+                }
+
+                for (let i = dashObstaculos.length - 1; i >= 0; i--) {
+                    const obs = dashObstaculos[i];
+                    obs.x -= dashVelocidad;
+
+                    const m = 6;
+                    if (
+                        dashPlayer.x + m < obs.x + obs.w - m &&
+                        dashPlayer.x + dashPlayer.size - m > obs.x + m &&
+                        dashPlayer.y + dashPlayer.size - m > obs.y - obs.h + m
+                    ) {
+                        crearDashParticulas(dashPlayer.x + 16, dashPlayer.y + 16, "#e84393", 25);
+                        terminarCarreraDash(false);
+                    }
+
+                    if (obs.x + obs.w < -20) dashObstaculos.splice(i, 1);
+                }
+
+                for (let i = dashMonedas.length - 1; i >= 0; i--) {
+                    const mon = dashMonedas[i];
+                    mon.x -= dashVelocidad;
+                    mon.fase += 0.1;
+
+                    const dx = (dashPlayer.x + dashPlayer.size / 2) - mon.x;
+                    const dy = (dashPlayer.y + dashPlayer.size / 2) - mon.y;
+                    if (!mon.recogida && Math.hypot(dx, dy) < dashPlayer.size / 2 + mon.r + 4) {
+                        mon.recogida = true;
+                        dashCorazones++;
+                        uiMonedas.innerText = dashCorazones;
+                        crearDashParticulas(mon.x, mon.y, "#f59e0b", 12);
+                    }
+
+                    if (mon.x < -30 || mon.recogida) dashMonedas.splice(i, 1);
+                }
+
+                dashPlataformas = dashPlataformas.filter(p => p.x + p.w > -20);
+            }
+
+            // Dibujar plataformas
+            dashPlataformas.forEach(plat => {
+                dashCtx.fillStyle = "#ff9bbd";
+                dashCtx.beginPath();
+                dashCtx.roundRect(plat.x, plat.y, plat.w, plat.h, 8);
+                dashCtx.fill();
+                dashCtx.strokeStyle = "#e84393";
+                dashCtx.lineWidth = 2;
+                dashCtx.stroke();
+            });
+
+            // Dibujar pinchos
+            dashObstaculos.forEach(obs => {
+                dashCtx.fillStyle = "#e84393";
+                dashCtx.beginPath();
+                dashCtx.moveTo(obs.x, obs.y);
+                dashCtx.lineTo(obs.x + obs.w / 2, obs.y - obs.h);
+                dashCtx.lineTo(obs.x + obs.w, obs.y);
+                dashCtx.closePath();
+                dashCtx.fill();
+
+                dashCtx.fillStyle = "rgba(255,255,255,0.45)";
+                dashCtx.beginPath();
+                dashCtx.moveTo(obs.x + obs.w / 2, obs.y - obs.h + 4);
+                dashCtx.lineTo(obs.x + obs.w / 2 - 4, obs.y - 4);
+                dashCtx.lineTo(obs.x + obs.w / 2, obs.y - 4);
+                dashCtx.closePath();
+                dashCtx.fill();
+            });
+
+            // Dibujar corazones flotantes
+            dashMonedas.forEach(mon => {
+                const offsetY = Math.sin(mon.fase) * 4;
+                dashCtx.font = "22px sans-serif";
+                dashCtx.textAlign = "center";
+                dashCtx.textBaseline = "middle";
+                dashCtx.fillText("💖", mon.x, mon.y + offsetY);
+            });
+
+            // Dibujar jugador
+            dashCtx.save();
+            dashCtx.translate(dashPlayer.x + dashPlayer.size / 2, dashPlayer.y + dashPlayer.size / 2);
+            dashCtx.rotate((dashPlayer.rotacion * Math.PI) / 180);
+            
+            dashCtx.fillStyle = "#ff69b4";
+            dashCtx.shadowBlur = 12;
+            dashCtx.shadowColor = "rgba(255, 105, 180, 0.5)";
+            dashCtx.beginPath();
+            dashCtx.roundRect(-dashPlayer.size / 2, -dashPlayer.size / 2, dashPlayer.size, dashPlayer.size, 8);
+            dashCtx.fill();
+
+            dashCtx.shadowBlur = 0;
+            dashCtx.fillStyle = "#ffffff";
+            dashCtx.font = "16px sans-serif";
+            dashCtx.textAlign = "center";
+            dashCtx.textBaseline = "middle";
+            dashCtx.fillText("❤️", 0, 1);
+            dashCtx.restore();
+
+            // Dibujar partículas
+            for (let i = dashParticulas.length - 1; i >= 0; i--) {
+                const p = dashParticulas[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vida -= 0.035;
+                if (p.vida <= 0) {
+                    dashParticulas.splice(i, 1);
+                } else {
+                    dashCtx.globalAlpha = p.vida;
+                    dashCtx.fillStyle = p.color;
+                    dashCtx.fillRect(p.x, p.y, p.size, p.size);
+                }
+            }
+            dashCtx.globalAlpha = 1;
+
+            requestAnimationFrame(loopDash);
+        }
+
+        // Iniciar ambos juegos al cargar
+        window.addEventListener("load", () => {
+            iniciarJuego();
+            resizeDashCanvas();
+            requestAnimationFrame(loopDash);
+        });
+    </script>
+</body>
+</html>
